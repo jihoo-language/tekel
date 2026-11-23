@@ -1,0 +1,23 @@
+// The subsets of a list: 2ⁿ of them. No polynomial bounds this, and Tekel
+// says so instead of guessing.
+
+fn cons_all(x: Int, ls: List<List<Int>>) -> List<List<Int>> =
+  match ls {
+    [] => []
+    l :: rest => (x :: l) :: cons_all(x, rest)
+  }
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+fn subsets(l: List<Int>) -> List<List<Int>> =
+  match l {
+    [] => [[]]
+    x :: xs => {
+      let s = subsets(xs)
+      append(cons_all(x, s), s)
+    }
+  }

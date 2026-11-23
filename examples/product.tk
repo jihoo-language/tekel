@@ -1,0 +1,52 @@
+// Bounds in several sizes at once. The cost of a nested loop over two lists
+// is the product of their lengths, and a budget can say so.
+
+fn pair_with(x: Int, ys: List<Int>) -> List<(Int, Int)> =
+  match ys {
+    [] => []
+    y :: rest => (x, y) :: pair_with(x, rest)
+  }
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+// Every (x, y) with x from xs and y from ys.
+fn product(xs: List<Int>, ys: List<Int>) -> List<(Int, Int)> costs 2 * |xs| * |ys| + 3 * |xs| + 1 =
+  match xs {
+    [] => []
+    x :: rest => append(pair_with(x, ys), product(rest, ys))
+  }
+
+fn count(l: List<a>) -> Int =
+  match l {
+    [] => 0
+    _ :: rest => 1 + count(rest)
+  }
+
+// The product has |xs|·|ys| pairs, so counting them costs that much again.
+fn count_product(xs: List<Int>, ys: List<Int>) -> Int = count(product(xs, ys))
+
+fn rev_onto(l: List<Int>, acc: List<Int>) -> List<Int> =
+  match l {
+    [] => acc
+    x :: rest => rev_onto(rest, x :: acc)
+  }
+
+fn insert(x: Int, l: List<Int>) -> List<Int> =
+  match l {
+    [] => [x]
+    y :: ys => if x <= y then x :: l else y :: insert(x, ys)
+  }
+
+fn isort(l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    x :: xs => insert(x, isort(xs))
+  }
+
+// Sorting the reverse of xs onto ys: the sort is quadratic in |xs| + |ys|,
+// which needs the mixed term |xs|·|ys|.
+fn sort_onto(xs: List<Int>, ys: List<Int>) -> List<Int> = isort(rev_onto(xs, ys))

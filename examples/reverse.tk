@@ -1,0 +1,23 @@
+// Two ways to reverse a list. The types say which one to use.
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+// Appends each element to the end: quadratic.
+fn slow_reverse(l: List<a>) -> List<a> =
+  match l {
+    [] => []
+    x :: xs => append(slow_reverse(xs), [x])
+  }
+
+fn rev_onto(l: List<a>, acc: List<a>) -> List<a> =
+  match l {
+    [] => acc
+    x :: xs => rev_onto(xs, x :: acc)
+  }
+
+// With an accumulator: linear.
+fn reverse(l: List<a>) -> List<a> costs 2 + |l| = rev_onto(l, [])

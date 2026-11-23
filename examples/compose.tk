@@ -1,0 +1,37 @@
+// Bounds compose. `pair_sums` builds a list of length C(n, 2), and sorting
+// that list with a quadratic sort costs O(n⁴). Tekel derives it from the
+// types of the parts: the potential that pays for the sort is created, as
+// the list is built, out of the potential of the input.
+
+fn insert(x: Int, l: List<Int>) -> List<Int> =
+  match l {
+    [] => [x]
+    y :: ys => if x <= y then x :: l else y :: insert(x, ys)
+  }
+
+fn isort(l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    x :: xs => insert(x, isort(xs))
+  }
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+fn add_to_all(x: Int, l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    y :: ys => (x + y) :: add_to_all(x, ys)
+  }
+
+// x + y for every x before y.
+fn pair_sums(l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    x :: xs => append(add_to_all(x, xs), pair_sums(xs))
+  }
+
+fn sorted_pair_sums(l: List<Int>) -> List<Int> = isort(pair_sums(l))

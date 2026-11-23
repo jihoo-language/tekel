@@ -1,0 +1,50 @@
+// Potential lives inside data, too. Flattening a list of lists costs one
+// step per outer cell and one per inner cell, and the bound says so with a
+// sum over the elements.
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+fn concat(ls: List<List<a>>) -> List<a> =
+  match ls {
+    [] => []
+    l :: rest => append(l, concat(rest))
+  }
+
+fn sum(l: List<Int>) -> Int =
+  match l {
+    [] => 0
+    x :: xs => x + sum(xs)
+  }
+
+fn row_sums(m: List<List<Int>>) -> List<Int> =
+  match m {
+    [] => []
+    row :: rows => sum(row) :: row_sums(rows)
+  }
+
+// All pairs (x, y) with x before y: C(n, 2) of them.
+fn pair_with(x: Int, l: List<Int>) -> List<(Int, Int)> =
+  match l {
+    [] => []
+    y :: ys => (x, y) :: pair_with(x, ys)
+  }
+
+fn pairs(l: List<Int>) -> List<(Int, Int)> =
+  match l {
+    [] => []
+    x :: xs => append(pair_with(x, xs), pairs(xs))
+  }
+
+fn count(l: List<a>) -> Int =
+  match l {
+    [] => 0
+    _ :: xs => 1 + count(xs)
+  }
+
+// The number of pairs, counted the long way round: cubic? No: the list of
+// pairs is quadratic, so counting it is quadratic, and Tekel adds the two.
+fn count_pairs(l: List<Int>) -> Int = count(pairs(l))

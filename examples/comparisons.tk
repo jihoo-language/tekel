@@ -1,0 +1,65 @@
+// Counting comparisons instead of steps. With `metric ticks`, only `tick`
+// costs, so this file weighs how many times two elements are compared.
+
+metric ticks
+
+fn less(x: Int, y: Int) -> Bool = { tick(1); x < y }
+
+fn insert(x: Int, l: List<Int>) -> List<Int> =
+  match l {
+    [] => [x]
+    y :: ys => if less(y, x) then y :: insert(x, ys) else x :: l
+  }
+
+// At most C(n, 2) comparisons: the bound is exact.
+fn isort(l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    x :: xs => insert(x, isort(xs))
+  }
+
+// The smallest element: n - 1 comparisons.
+fn min_of(m: Int, l: List<Int>) -> Int =
+  match l {
+    [] => m
+    x :: xs => if less(x, m) then min_of(x, xs) else min_of(m, xs)
+  }
+
+fn minimum(l: List<Int>) -> Int =
+  match l {
+    [] => fail("minimum of an empty list")
+    x :: xs => min_of(x, xs)
+  }
+
+fn merge(xs: List<Int>, ys: List<Int>) -> List<Int> =
+  match xs {
+    [] => ys
+    x :: xs2 => match ys {
+      [] => xs
+      y :: ys2 => if less(x, y) then x :: merge(xs2, ys) else y :: merge(xs, ys2)
+    }
+  }
+
+fn split(l: List<Int>) -> (List<Int>, List<Int>) =
+  match l {
+    [] => ([], [])
+    x :: rest => {
+      let (a, b) = split(rest)
+      (x :: b, a)
+    }
+  }
+
+// Mergesort makes n log n comparisons, but its recursion is not on a
+// sublist the analysis can see. Polynomial potential still gives a bound:
+// a quadratic one.
+fn msort(l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    x :: rest => match rest {
+      [] => [x]
+      _ :: _ => {
+        let (a, b) = split(l)
+        merge(msort(a), msort(b))
+      }
+    }
+  }

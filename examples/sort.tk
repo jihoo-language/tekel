@@ -1,0 +1,37 @@
+// Sorting, weighed. Run `tekel bound examples/sort.tk`.
+
+fn insert(x: Int, l: List<Int>) -> List<Int> =
+  match l {
+    [] => [x]
+    y :: ys => if x <= y then x :: l else y :: insert(x, ys)
+  }
+
+fn isort(l: List<Int>) -> List<Int> costs 1 + |l| + |l|^2 =
+  match l {
+    [] => []
+    x :: xs => insert(x, isort(xs))
+  }
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+fn partition(p: Int, l: List<Int>) -> (List<Int>, List<Int>) =
+  match l {
+    [] => ([], [])
+    x :: xs => {
+      let (lo, hi) = partition(p, xs)
+      if x < p then (x :: lo, hi) else (lo, x :: hi)
+    }
+  }
+
+fn quicksort(l: List<Int>) -> List<Int> =
+  match l {
+    [] => []
+    p :: xs => {
+      let (lo, hi) = partition(p, xs)
+      append(quicksort(lo), p :: quicksort(hi))
+    }
+  }

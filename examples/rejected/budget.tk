@@ -1,0 +1,14 @@
+// A budget is part of the type. This one promises a linear reverse, but the
+// body appends to the end at every step, so it cannot be kept.
+
+fn append(xs: List<a>, ys: List<a>) -> List<a> =
+  match xs {
+    [] => ys
+    x :: rest => x :: append(rest, ys)
+  }
+
+fn reverse(l: List<a>) -> List<a> costs 1 + 2 * |l| =
+  match l {
+    [] => []
+    x :: xs => append(reverse(xs), [x])
+  }

@@ -1,0 +1,37 @@
+// A functional queue: two lists, the back one reversed.
+//
+// Dequeuing from an empty front reverses the whole back list, which can take
+// |back| steps. Yet a run of n operations costs O(n): every element is moved
+// at most once. Tekel finds that amortized bound by itself. The potential it
+// puts on `back` is the credit each enqueued element carries for its move.
+
+fn rev_onto(l: List<Int>, acc: List<Int>) -> List<Int> =
+  match l {
+    [] => acc
+    x :: xs => rev_onto(xs, x :: acc)
+  }
+
+// The first element (0 if there is none) and the queue without it.
+fn dequeue(front: List<Int>, back: List<Int>) -> (Int, (List<Int>, List<Int>)) =
+  match front {
+    x :: rest => (x, (rest, back))
+    [] => match rev_onto(back, []) {
+      [] => (0, ([], []))
+      x :: rest => (x, (rest, []))
+    }
+  }
+
+// A positive op enqueues itself; any other op dequeues. The result is the
+// sum of everything dequeued.
+fn run(ops: List<Int>, front: List<Int>, back: List<Int>) -> Int =
+  match ops {
+    [] => 0
+    op :: more =>
+      if op > 0 then run(more, front, op :: back)
+      else {
+        let (x, (f, b)) = dequeue(front, back)
+        x + run(more, f, b)
+      }
+  }
+
+fn simulate(ops: List<Int>) -> Int = run(ops, [], [])

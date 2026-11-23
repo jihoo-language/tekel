@@ -1,0 +1,12 @@
+[package]
+name = "tekel"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "A language whose functions are weighed: every function's type is a proved bound on its cost"
+license = "Apache-2.0"
+
+[dependencies]
+
+[profile.release]
+debug = false
